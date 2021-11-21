@@ -1,0 +1,52 @@
+version: '3'
+
+services:
+  elixir_phoenix:
+    container_name: elixir_phoenix_api
+    build: .
+    command: dockerize -wait tcp://db:5432 -timeout 40s ./.devcontainer/entrypoint.sh
+    environment:
+      PGUSER: postgres
+      PGPASSWORD: postgres
+      PGDATABASE: elixir
+      PGPORT: 5432
+      PGHOST: db
+    ports:
+      - 4000:4000
+    networks:
+      - app-network
+    volumes:
+      - ../:/elixirPhoenixApi:cached
+      - ../:/home/elixir/app
+
+  db:
+    build: ./postgres
+    container_name: db
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DB=elixir
+    ports:
+      - 5432:5432
+    networks:
+      - app-network
+    volumes:
+      - .docker/pgdata:/var/lib/postgresql/data
+
+  db_test:
+    build: ./postgres
+    container_name: db_test
+    ports:
+      - 5433:5432
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DB=elixir_test
+    networks:
+      - app-network
+    volumes:
+      - .docker/pgdatatest:/var/lib/postgresql/data
+
+networks:
+  app-network:
+    driver: bridge
