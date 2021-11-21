@@ -3,6 +3,8 @@ defmodule AppWeb.UsersControllerTest do
 
   import App.Factory
 
+  alias AppWeb.Auth.Guardian
+
   describe "create/2" do
     test "when all params are valid, creates the user", %{conn: conn} do
       params = build(:user_params)
@@ -47,9 +49,16 @@ defmodule AppWeb.UsersControllerTest do
   end
 
   describe "delete/2" do
+    setup %{conn: conn} do
+      user = insert(:user)
+      {:ok, token, _claims} = Guardian.encode_and_sign(user)
+      conn = put_req_header(conn, "authorization", "Bearer #{token}")
+
+      {:ok, conn: conn, user: user}
+    end
+
     test "when there is a user with the given id, deletes the user", %{conn: conn} do
       id = "6cfd80fa-afc9-4988-aeb3-5f49852c349b"
-      insert(:user)
 
       response =
         conn

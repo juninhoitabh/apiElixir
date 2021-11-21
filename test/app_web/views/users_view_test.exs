@@ -8,11 +8,13 @@ defmodule AppWeb.UsersViewTest do
 
   test "renders create.json" do
     user = build(:user)
+    token = "xpto154"
 
-    response = render(UsersView, "create.json", user: user)
+    response = render(UsersView, "create.json", token: token, user: user)
 
     assert %{
              message: "User created",
+             token: "xpto154",
              user: %App.User{
                address: "Rua test, 5",
                age: 27,

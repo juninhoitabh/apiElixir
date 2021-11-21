@@ -14,6 +14,14 @@ config :app, App.Repo,
   migration_primary_key: [type: :binary_id],
   migration_foreign_key: [type: :binary_id]
 
+config :app, AppWeb.Auth.Guardian,
+  issuer: "app",
+  secret_key: "wfSCiFwX2yc74TN06zSxceI8su32v6WGykFNMzzc+TCenOfnyjJIYLbmkKJzwinA"
+
+config :app, AppWeb.Auth.Pipeline,
+  module: AppWeb.Auth.Guardian,
+  error_handler: AppWeb.Auth.ErrorHandler
+
 # Configures the endpoint
 config :app, AppWeb.Endpoint,
   url: [host: "localhost"],
